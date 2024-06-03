@@ -1,7 +1,9 @@
 {
   "scripts": {
-    "cmake": " rm -rf ./build && cmake -S . -B build",
+    "cmake:macos": "rm -rf ./build && cmake -S . -B build",
+    "cmake:windows": "rm ./build -Recurse -Force && cmake -S . -B build",
     "build": "cmake --build build",
-    "start": "./build/Transformation"
+    "start:macos": "./build/Transformation",
+    "start:windows": "./build/Debug/Transformation.exe"
   }
 }
