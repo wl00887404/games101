@@ -132,10 +132,20 @@ void rst::rasterizer::draw(rst::pos_buf_id pos_buffer,
       vec /= vec.w();
     }
 
+    /**
+     * MAX:
+     * 畫布是 width，0.5 width 應該是中心
+     * x 範圍應該是 -1 ~ 1
+     * x + 1 => 0 ~ 2
+     * (x + 1) * 0.5 => 0 ~ 1
+     * (x + 1) * 0.5 * width => 0 ~ width
+     */
     for (auto& vert : v) {
       vert.x() = 0.5 * width * (vert.x() + 1.0);
       vert.y() = 0.5 * height * (vert.y() + 1.0);
       vert.z() = vert.z() * f1 + f2;
+
+      std::cout << vert << std::endl;
     }
 
     for (int i = 0; i < 3; ++i) {

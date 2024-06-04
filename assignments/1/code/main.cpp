@@ -19,27 +19,88 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos) {
   return view;
 }
 
+// MAX: rotation_angle 是 +10 + 10 應該也是 degree
 Eigen::Matrix4f get_model_matrix(float rotation_angle) {
   Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-
-  // TODO: Implement this function
-  // Create the model matrix for rotating the triangle around the Z axis.
-  // Then return it.
+  float radian = rotation_angle * 180 / MY_PI;
+  model << cos(radian), -sin(radian), 0.0, 0.0,  //
+      sin(radian), cos(radian), 0.0, 0.0,        //
+      0.0, 0.0, 1.0, 0.0,                        //
+      0.0, 0.0, 0.0, 1.0;
 
   return model;
 }
 
+/**
+ * MAX:
+ * 後續程式碼呼叫是 get_projection_matrix(45, 1, 0.1, 50)
+ * 所以 eye_fov 是 degree
+ * 投影矩陣是 [
+ *   [n, 0,     0,     0],
+ *   [0, n,     0,     0],
+ *   [0, 0, n + f, -1 * n * f],
+ *   [0, 0,     1,     0]
+ * ]
+ */
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                                       float zNear, float zFar) {
-  // Students will implement this function
-
   Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
 
-  // TODO: Implement this function
-  // Create the projection matrix for the given parameters.
-  // Then return it.
+  projection << zNear, 0.0, 0.0, 0.0,             //
+      0.0, zNear, 0.0, 0.0,                       //
+      0.0, 0.0, zNear + zFar, -1 * zNear * zFar,  //
+      0.0, 0.0, 1.0, 0.0;
 
-  return projection;
+  /**
+   * MAX:
+   * 接下來把空間縮放進 NDC
+   * height = abs(zNear) * tan(eye_fov) * 2
+   * width = height * aspect_ratio
+   * length = zNear - zFar
+   */
+  float eye_fov_radian = eye_fov * 180 / MY_PI;
+  float height = abs(zNear) * tan(eye_fov_radian) * 2;
+  float width = height * aspect_ratio;
+  float length = zNear - zFar;
+
+  Eigen::Matrix4f ndc;
+  ndc << 2.0 / width, 0, 0, 0,  //
+      0, 2.0 / height, 0, 0,    //
+      0, 0, 2.0 / length, 0,    //
+      0, 0, 0, 1;
+
+  return ndc * projection;
+}
+
+Eigen::Matrix4f get_rotation(Eigen::Vector3f axis, float angle) {
+  float cosX = axis[2] / sqrt(axis[1] * axis[1] + axis[2] * axis[2]);
+  float sinX = axis[1] / sqrt(axis[1] * axis[1] + axis[2] * axis[2]);
+  Matrix4f rotAxisToXZ;
+  rotAxisToXZ << 1, 0, 0, 0,  //
+      0, cosX, -sinX, 0,      //
+      0, sinX, cosX, 0,       //
+      0, 0, 0, 1;
+
+  float cosY = sqrt(axis[1] * axis[1] + axis[2] * axis[2]) /
+               sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+  float sinY =
+      axis[0] / sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+  Matrix4f rotXZToZ;
+  rotXZToZ << cosY, 0, -sinY, 0,  //
+      0, 1, 0, 0,                 //
+      sinY, 0, cosY, 0,           //
+      0, 0, 0, 1;
+
+  Matrix4f rotAxisToZ = rotXZToZ * rotAxisToXZ;
+  Matrix4f rotZToAxis = rotAxisToZ.transpose();
+
+  Matrix4f rotAroundZ;
+  rotAroundZ << cos(angle), -sin(angle), 0, 0,  //
+      sin(angle), cos(angle), 0, 0,             //
+      0, 0, 1, 0,                               //
+      0, 0, 0, 1;
+
+  return rotZToAxis * rotAroundZ * rotAxisToZ;
 }
 
 int main(int argc, const char** argv) {
@@ -91,6 +152,7 @@ int main(int argc, const char** argv) {
 
     r.set_model(get_model_matrix(angle));
     r.set_view(get_view_matrix(eye_pos));
+    // MAX: 幹怎麼正的
     r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
     r.draw(pos_id, ind_id, rst::Primitive::Triangle);
