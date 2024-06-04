@@ -23,3 +23,6 @@ target_include_directories(Transformation PRIVATE ${EIGEN3_INCLUDE_DIR})
 # 印出所有 include 資料夾
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 message(STATUS "Include directories: ${dirs}")
+
+get_target_property(tar_dirs Transformation INCLUDE_DIRECTORIES)
+message(STATUS "Transformation include directories: ${tar_dirs}")
