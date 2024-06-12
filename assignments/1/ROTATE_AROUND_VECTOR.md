@@ -124,19 +124,59 @@ $$
 
 實作請參考 [euler_angles.js](./euler_angles.js)
 
-<!-- ## 從羅德里格旋轉公式提取旋轉矩陣 -->
+## 從羅德里格旋轉公式提取旋轉矩陣
+
+假設 $N = (nx, ny, nz)$ 以及 $P = (px, py, pz)$ 帶入羅德里格旋轉公式
+
+$$
+\begin{aligned}
+P_{rot} &=  \cos{\theta} * \vec{P} + (1 - \cos{\theta}) * \vec{P} \cdot \vec{N} * \vec{N} -\sin{\theta} * \vec{P} \times \vec{N} \\
+  &= \begin{bmatrix} \cos{\theta} * px \\
+  \cos{\theta} * py \\
+  \cos{\theta} * pz \end{bmatrix} + \begin{bmatrix} (1 - \cos{\theta}) * (nx * px + ny * py + nz * pz) * nx \\
+  (1 - \cos{\theta}) * (nx * px + ny * py + nz * pz) * ny \\
+  (1 - \cos{\theta}) * (nx * px + ny * py + nz * pz) * nz \end{bmatrix} + \begin{bmatrix} \sin{\theta} * (ny * pz - nz* py) \\
+  \sin{\theta} * (nz * px - nx * pz) \\
+  \sin{\theta} * (nx * py - ny* px)\end{bmatrix} \\
+  &=\begin{bmatrix} \cos{\theta} * px \\
+  \cos{\theta} * py \\
+  \cos{\theta} * pz \end{bmatrix} + \begin{bmatrix} (1 - \cos{\theta}) * (nx^2 * px + (nx * ny) * py + (nx * nz) * pz) \\
+  (1 - \cos{\theta}) * ((nx * ny) * px + ny^2 * py + (ny * nz) * pz) \\
+  (1 - \cos{\theta}) * ((nx * nz) * px + (ny * nz) * py + nz^2 * pz) \end{bmatrix} + \begin{bmatrix} \sin{\theta} * (- nz* py + ny * pz ) \\
+  \sin{\theta} * (nz * px - nx * pz) \\
+  \sin{\theta} * (- ny* px + nx * py)\end{bmatrix} \\
+  &= (\cos{\theta} * \begin{bmatrix} 1 & 0 & 0 \\
+  0 & 1 & 0 \\
+  0 & 0 & 1 \end{bmatrix} +(1 - \cos{\theta}) * \begin{bmatrix} nx^2 & nx * ny & nx * nz \\
+  nx * ny  & ny^2 & ny * nz \\
+  nx * nz & ny * nz & nz^2 \end{bmatrix} + \sin{\theta} * \begin{bmatrix} 0 & -nz & ny \\
+  nz & 0 & -nx \\
+  -ny & nx & 0\end{bmatrix})* \begin{bmatrix} px \\
+  py \\
+  pz\end{bmatrix}\\
+  &= (\cos{\theta} * I +(1 - \cos{\theta}) * N * N^T+ \sin{\theta} * \begin{bmatrix} 0 & -nz & ny \\
+  nz & 0 & -nx \\
+  -ny & nx & 0\end{bmatrix})* \begin{bmatrix} px \\
+  py \\
+  pz\end{bmatrix}
+\end{aligned}
+$$
+
+也就是 [Games101 第 4 講投影片](https://sites.cs.ucsb.edu/~lingqi/teaching/resources/GAMES101_Lecture_04.pdf) 第 10 頁上的公式
 
 <!-- ## 歐拉角優化的可能性
 
 只需要 N 就可以取旋轉矩陣，只需要保留 $\cos{\theta}$ 與 $\sin{\theta}$ 做為參數
+
+先將 N 正規化，以減少一些運算
 
 $$
 \begin{aligned}
 \vec{N} &= (nx, ny, nz) \\
 a &= \cfrac{nz}{\sqrt{ny^2 + nz^2}} \\
 b &= \cfrac{ny}{\sqrt{ny^2 + nz^2}} \\
-c &= \cfrac{\sqrt{ny^2 + nz^2}}{\sqrt{nx^2 + ny^2 + nz^2}} \\
-d &= \cfrac{nx}{\sqrt{nx^2 + ny^2 + nz^2}} \\
+c &= \cfrac{\sqrt{ny^2 + nz^2}}{\sqrt{nx^2 + ny^2 + nz^2}} = \sqrt{ny^2 + nz^2} \\
+d &= \cfrac{nx}{\sqrt{nx^2 + ny^2 + nz^2}} = nx \\
 e &= \cos{\theta} \\
 f &= \sin{\theta} \\
 \\
