@@ -164,11 +164,41 @@ $$
 
 也就是 [Games101 第 4 講投影片](https://sites.cs.ucsb.edu/~lingqi/teaching/resources/GAMES101_Lecture_04.pdf) 第 10 頁上的公式
 
-<!-- ## 歐拉角優化的可能性
+這裡得到的旋轉矩陣，與透過歐拉角得到的矩陣是完全一樣的
 
-只需要 N 就可以取旋轉矩陣，只需要保留 $\cos{\theta}$ 與 $\sin{\theta}$ 做為參數
+直接從程式運算可以證明，也可以花點時間藉由數學展開證明
 
-先將 N 正規化，以減少一些運算
+## 後計
+
+這個公式是在 [Games101 第 4 講](https://www.bilibili.com/video/BV1X7411F744?p=4&vd_source=a16a592878ecb424b56a5a4112d932a5) 上補充的
+
+老師在課上沒有特別花時間證明，但有附上 [手寫的補充教材](https://sites.cs.ucsb.edu/~lingqi/teaching/resources/GAMES101_Lecture_04_supp.pdf)
+
+其實我沒有看懂老師的證明，但我在 [良葛格的 Blog](https://openhome.cc/Gossip/WebGL/Rodrigues.html) 找到了該證明的詳細解說，並重新寫成我自己的版本
+
+我原始證明想法其實是歐拉角的作法，思想比較直觀，我第一時間其實也是挑戰用歐拉角把證明寫出來
+
+遇到的第一個困難是矩陣展開的過程實在是太過繁瑣了（其實有[網站](https://matrixcalc.org/zh-TW/) 提供矩陣展開的運算）
+
+再來是我寫錯了把 $\vec{N_{rot(xz)}}$ 轉到 Z 軸的角度，我直接使用 $\vec{N}$ 投影到 XZ 的向量夾角
+
+實際上 $\vec{N_{rot(xz)}}$ 與此投影向量並不會重疊，用 [Geogebra](https://www.geogebra.org/calculator) 把畫出向量之後才發現錯誤
+
+我強烈建議有想要寫任何 3D 幾何證明的人，先使用 Geogebra 把向量畫出來，單純用想像的實在太困難了
+
+另外，如果想專心在圖形學上，不需要花這麼多心思在此公式的證明上，大致聽一聽推導的思想就好了
+
+我實在是花了太多時間了，尤其是親手展開矩陣乘法的部分，覺得後悔
+
+<!--
+
+## 比較歐拉角與羅德里格旋轉公式
+
+在歐拉角的版本是直接用 N 推導出旋轉矩陣
+
+雖然都是取角度，所以 N 的長度不重要
+
+但為了簡化運算，還是必須先把 N 正規化
 
 $$
 \begin{aligned}
@@ -186,4 +216,5 @@ bcd+acf-bcde & b^2c^2+a^2e+b^2d^2e & abc^2-a^2df-b^2df-abe+abd^2e \\
 acd-bcf-acde & abc^2+a^2df+b^2df-abe+abd^2e & a^2c^2+b^2e+a^2d^2e
 \end{bmatrix}
 \end{aligned}
-$$ -->
+$$
+-->
