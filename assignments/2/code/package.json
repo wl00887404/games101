@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "cmake:install": "vcpkg install opencv2 eigen3",
+    "cmake:macos": "rm -rf ./build && cmake -S . -B build",
+    "cmake:windows": "rm ./build -Recurse -Force && cmake -S . -B build",
+    "build": "cmake --build build",
+    "start:macos": "./build/Rasterizer",
+    "start:windows": "./build/Debug/Rasterizer.exe"
+  }
+}
