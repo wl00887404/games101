@@ -107,14 +107,31 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer,
   }
 }
 
+bool once = false;
 // Screen space rasterization
 void rst::rasterizer::rasterize_triangle(const Triangle& t) {
+  // std::array<Vector4f, 3>
   auto v = t.toVector4();
 
-  // TODO : Find out the bounding box of current triangle.
-  // iterate through the pixel and find if the current pixel is inside the
-  // triangle
+  // Find the bounding box
+  float top = v[0][1];
+  float right = v[0][0];
+  float bottom = v[0][1];
+  float left = v[0][0];
 
+  for (int i = 1; i < 3; i++) {
+    top = std::max(top, v[i][1]);
+    right = std::max(right, v[i][0]);
+    bottom = std::min(bottom, v[i][1]);
+    left = std::min(left, v[i][0]);
+  }
+
+  for (int x = left; x <= right; x++) {
+    for (int y = bottom; y <= top; y++) {
+      
+
+    }
+  }
   // If so, use the following code to get the interpolated z value.
   // auto[alpha, beta, gamma] = computeBarycentric2D(x, y, t.v);
   // float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma /
