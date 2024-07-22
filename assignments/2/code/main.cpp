@@ -26,10 +26,25 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle) {
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                                       float zNear, float zFar) {
-  // TODO: Copy-paste your implementation from the previous assignment.
-  Eigen::Matrix4f projection;
+  Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
 
-  return projection;
+  projection << zNear, 0.0, 0.0, 0.0,             //
+      0.0, zNear, 0.0, 0.0,                       //
+      0.0, 0.0, zNear + zFar, -1 * zNear * zFar,  //
+      0.0, 0.0, 1.0, 0.0;
+
+  float eye_fov_radian = eye_fov / 180 * MY_PI;
+  float height = abs(zNear) * tan(eye_fov_radian) * 2;
+  float width = height * aspect_ratio;
+  float length = zNear - zFar;
+
+  Eigen::Matrix4f ndc;
+  ndc << 2.0 / width, 0, 0, 0,  //
+      0, 2.0 / height, 0, 0,    //
+      0, 0, 2.0 / length, 0,    //
+      0, 0, 0, 1;
+
+  return ndc * projection;
 }
 
 int main(int argc, const char** argv) {
@@ -53,7 +68,9 @@ int main(int argc, const char** argv) {
   std::vector<Eigen::Vector3i> ind{{0, 1, 2}, {3, 4, 5}};
 
   std::vector<Eigen::Vector3f> cols{
+      // MAX: light green
       {217.0, 238.0, 185.0}, {217.0, 238.0, 185.0}, {217.0, 238.0, 185.0},
+      // MAX: light blue
       {185.0, 217.0, 238.0}, {185.0, 217.0, 238.0}, {185.0, 217.0, 238.0}};
 
   auto pos_id = r.load_positions(pos);
@@ -68,7 +85,7 @@ int main(int argc, const char** argv) {
 
     r.set_model(get_model_matrix(angle));
     r.set_view(get_view_matrix(eye_pos));
-    r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
+    r.set_projection(get_projection_matrix(45, 1, -0.1, -50));
 
     r.draw(pos_id, ind_id, col_id, rst::Primitive::Triangle);
     cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
@@ -85,7 +102,7 @@ int main(int argc, const char** argv) {
 
     r.set_model(get_model_matrix(angle));
     r.set_view(get_view_matrix(eye_pos));
-    r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
+    r.set_projection(get_projection_matrix(45, 1, -0.1, -50));
 
     r.draw(pos_id, ind_id, col_id, rst::Primitive::Triangle);
 
