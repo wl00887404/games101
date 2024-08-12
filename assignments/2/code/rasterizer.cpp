@@ -38,7 +38,7 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f) {
   return Vector4f(v3.x(), v3.y(), v3.z(), w);
 }
 
-static bool insideTriangle(int x, int y, const Vector3f* _v) {
+static bool insideTriangle(float x, float y, const Vector3f* _v) {
   // TODO: Implement this function to check if the point (x, y) is inside the
   // triangle represented by _v[0], _v[1], _v[2]
   /**
@@ -142,11 +142,11 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
 
   for (int x = left; x <= right; x++) {
     for (int y = bottom; y <= top; y++) {
-      if (!insideTriangle(x, y, t.v)) continue;
+      if (!insideTriangle(x + 0.5, y + 0.5, t.v)) continue;
       Vector3f point(x, y, 0);
 
       //  MAX: 助教給的 z 插值程式碼
-      auto [alpha, beta, gamma] = computeBarycentric2D(x, y, t.v);
+      auto [alpha, beta, gamma] = computeBarycentric2D(x + 0.5, y + 0.5, t.v);
       float w_reciprocal =
           1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
       float z_interpolated = alpha * v[0].z() / v[0].w() +
