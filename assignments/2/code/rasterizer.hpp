@@ -44,7 +44,7 @@ struct col_buf_id {
 
 class rasterizer {
  public:
-  rasterizer(int w, int h);
+  rasterizer(int w, int h, int msaa_level = 1);
   pos_buf_id load_positions(const std::vector<Eigen::Vector3f>& positions);
   ind_buf_id load_indices(const std::vector<Eigen::Vector3i>& indices);
   col_buf_id load_colors(const std::vector<Eigen::Vector3f>& colors);
@@ -53,14 +53,12 @@ class rasterizer {
   void set_view(const Eigen::Matrix4f& v);
   void set_projection(const Eigen::Matrix4f& p);
 
-  void set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
-
   void clear(Buffers buff);
 
   void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer,
             Primitive type);
 
-  std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; }
+  std::vector<Eigen::Vector3f>& frame_buffer() { return frame_bufs[0]; }
 
  private:
   void draw_line(Eigen::Vector3f begin, Eigen::Vector3f end);
@@ -79,9 +77,11 @@ class rasterizer {
   std::map<int, std::vector<Eigen::Vector3i>> ind_buf;
   std::map<int, std::vector<Eigen::Vector3f>> col_buf;
 
-  std::vector<Eigen::Vector3f> frame_buf;
+  int msaa_level;
+  std::vector<float> mass_shifts;
+  std::vector<std::vector<Eigen::Vector3f>> frame_bufs;
+  std::vector<std::vector<float>> depth_bufs;
 
-  std::vector<float> depth_buf;
   int get_index(int x, int y);
 
   int width, height;

@@ -57,7 +57,7 @@ int main(int argc, const char** argv) {
     filename = std::string(argv[1]);
   }
 
-  rst::rasterizer r(700, 700);
+  rst::rasterizer r(700, 700, 2);
 
   Eigen::Vector3f eye_pos = {0, 0, 5};
 
@@ -67,11 +67,14 @@ int main(int argc, const char** argv) {
 
   std::vector<Eigen::Vector3i> ind{{0, 1, 2}, {3, 4, 5}};
 
-  std::vector<Eigen::Vector3f> cols{
-      // MAX: light green
-      {217.0, 238.0, 185.0}, {217.0, 238.0, 185.0}, {217.0, 238.0, 185.0},
-      // MAX: light blue
-      {185.0, 217.0, 238.0}, {185.0, 217.0, 238.0}, {185.0, 217.0, 238.0}};
+  std::vector<Eigen::Vector3f> cols{// MAX: light green
+                                    {217.0, 238.0, 185.0},
+                                    {217.0, 238.0, 185.0},
+                                    {217.0, 238.0, 185.0},
+                                    // MAX: light blue
+                                    {185.0, 217.0, 238.0},
+                                    {185.0, 217.0, 238.0},
+                                    {185.0, 217.0, 238.0}};
 
   auto pos_id = r.load_positions(pos);
   auto ind_id = r.load_indices(ind);
